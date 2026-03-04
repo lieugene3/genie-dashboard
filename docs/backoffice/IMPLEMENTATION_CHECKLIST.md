@@ -42,7 +42,7 @@ Source contracts:
 
 ## Phase 5: Test + Pilot Readiness
 
-- [ ] Add lifecycle E2E (`draft -> validate -> publish -> runtime`)
-- [ ] Add stale revision conflict E2E (`409`)
-- [ ] Add permission blocking E2E (`403`)
-- [ ] Verify pilot runbook gates with no manual DB changes
+- [x] Add lifecycle E2E (`draft -> validate -> publish -> runtime`)
+- [x] Add stale revision conflict E2E (`409`)
+- [x] Add permission blocking E2E (`403`)
+- [x] Verify pilot runbook gates with no manual DB changes
