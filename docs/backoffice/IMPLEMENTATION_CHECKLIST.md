@@ -36,9 +36,9 @@ Source contracts:
 
 ## Phase 4: Wizard + Runtime Verification
 
-- [ ] Integrate wizard readiness endpoint
-- [ ] Integrate wizard publish-required endpoint with expected revisions map
-- [ ] Add runtime verification panel (`bootstrap` + per-domain runtime reads)
+- [x] Integrate wizard readiness endpoint
+- [x] Integrate wizard publish-required endpoint with expected revisions map
+- [x] Add runtime verification panel (`bootstrap` + per-domain runtime reads)
 
 ## Phase 5: Test + Pilot Readiness
 
