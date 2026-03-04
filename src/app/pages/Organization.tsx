@@ -1,15 +1,68 @@
-import { Building2, Mail, Phone, MapPin, Globe, Sparkles } from "lucide-react";
+"use client";
+
+import { Building2, Mail, Phone, Globe } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-import { Button } from "../components/ui/button";
-import { Textarea } from "../components/ui/textarea";
 import { Separator } from "../components/ui/separator";
+import { useConfigEditor } from "@/lib/backoffice/use-config-editor";
+import { EditorStatusCard } from "@/app/components/backoffice/EditorStatusCard";
+import { ValidationSummaryCard } from "@/app/components/backoffice/ValidationSummaryCard";
+import { EditorErrorCard } from "@/app/components/backoffice/EditorErrorCard";
+import { PublishActions } from "@/app/components/backoffice/PublishActions";
+
+const DEFAULT_ORGANIZATION_PAYLOAD = {
+  business_name: "The Artisan Kitchen",
+  legal_business_name: "Artisan Kitchen LLC",
+  tax_id: "XX-XXXXXXX",
+  business_type: "Restaurant & Bar",
+  address_line_1: "425 Market Street",
+  city: "San Francisco",
+  state: "CA",
+  postal_code: "94105",
+  phone: "(415) 555-0123",
+  email: "hello@artisankitchen.com",
+  website: "https://artisankitchen.com",
+};
+
+const OPERATING_HOURS = [
+  { day: "Monday", hours: "11:00 AM - 10:00 PM" },
+  { day: "Tuesday", hours: "11:00 AM - 10:00 PM" },
+  { day: "Wednesday", hours: "11:00 AM - 10:00 PM" },
+  { day: "Thursday", hours: "11:00 AM - 11:00 PM" },
+  { day: "Friday", hours: "11:00 AM - 11:30 PM" },
+  { day: "Saturday", hours: "10:00 AM - 11:30 PM" },
+  { day: "Sunday", hours: "10:00 AM - 9:00 PM" },
+];
 
 export function Organization() {
+  const {
+    payload,
+    revision,
+    validationErrors,
+    lastPublished,
+    lastError,
+    isLoading,
+    isSaving,
+    isValidating,
+    isPublishing,
+    hasUnsavedChanges,
+    setPayloadField,
+    reload,
+    saveDraft,
+    validateDraft,
+    publishDraft,
+  } = useConfigEditor({
+    domain: "organization",
+  });
+
+  const valueFor = (key: keyof typeof DEFAULT_ORGANIZATION_PAYLOAD) => {
+    const value = payload[key];
+    return typeof value === "string" ? value : DEFAULT_ORGANIZATION_PAYLOAD[key];
+  };
+
   return (
     <div className="p-8 max-w-5xl space-y-8">
-      {/* Header */}
       <div>
         <div className="flex items-center gap-2 mb-2">
           <h1 className="text-3xl font-semibold">Organization</h1>
@@ -20,7 +73,15 @@ export function Organization() {
         </p>
       </div>
 
-      {/* Business Information */}
+      <EditorStatusCard
+        revision={revision}
+        isLoading={isLoading}
+        hasUnsavedChanges={hasUnsavedChanges}
+        lastPublishedAt={lastPublished?.published_at ?? null}
+      />
+      <ValidationSummaryCard errors={validationErrors} />
+      <EditorErrorCard error={lastError} />
+
       <Card className="border-[var(--border)] shadow-sm">
         <CardHeader>
           <CardTitle>Business Information</CardTitle>
@@ -31,7 +92,8 @@ export function Organization() {
               <Label htmlFor="business-name">Business Name</Label>
               <Input
                 id="business-name"
-                defaultValue="The Artisan Kitchen"
+                value={valueFor("business_name")}
+                onChange={(event) => setPayloadField("business_name", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -39,7 +101,10 @@ export function Organization() {
               <Label htmlFor="legal-name">Legal Business Name</Label>
               <Input
                 id="legal-name"
-                defaultValue="Artisan Kitchen LLC"
+                value={valueFor("legal_business_name")}
+                onChange={(event) =>
+                  setPayloadField("legal_business_name", event.target.value)
+                }
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -50,7 +115,8 @@ export function Organization() {
               <Label htmlFor="tax-id">Tax ID / EIN</Label>
               <Input
                 id="tax-id"
-                defaultValue="XX-XXXXXXX"
+                value={valueFor("tax_id")}
+                onChange={(event) => setPayloadField("tax_id", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -58,7 +124,8 @@ export function Organization() {
               <Label htmlFor="business-type">Business Type</Label>
               <Input
                 id="business-type"
-                defaultValue="Restaurant & Bar"
+                value={valueFor("business_type")}
+                onChange={(event) => setPayloadField("business_type", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -70,7 +137,8 @@ export function Organization() {
             <Label htmlFor="address">Business Address</Label>
             <Input
               id="address"
-              defaultValue="425 Market Street"
+              value={valueFor("address_line_1")}
+              onChange={(event) => setPayloadField("address_line_1", event.target.value)}
               className="bg-[var(--input-background)] border-0"
             />
           </div>
@@ -80,7 +148,8 @@ export function Organization() {
               <Label htmlFor="city">City</Label>
               <Input
                 id="city"
-                defaultValue="San Francisco"
+                value={valueFor("city")}
+                onChange={(event) => setPayloadField("city", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -88,7 +157,8 @@ export function Organization() {
               <Label htmlFor="state">State</Label>
               <Input
                 id="state"
-                defaultValue="CA"
+                value={valueFor("state")}
+                onChange={(event) => setPayloadField("state", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -96,7 +166,8 @@ export function Organization() {
               <Label htmlFor="zip">ZIP Code</Label>
               <Input
                 id="zip"
-                defaultValue="94105"
+                value={valueFor("postal_code")}
+                onChange={(event) => setPayloadField("postal_code", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -104,7 +175,6 @@ export function Organization() {
         </CardContent>
       </Card>
 
-      {/* Contact Information */}
       <Card className="border-[var(--border)] shadow-sm">
         <CardHeader>
           <CardTitle>Contact Information</CardTitle>
@@ -118,7 +188,8 @@ export function Organization() {
               </Label>
               <Input
                 id="phone"
-                defaultValue="(415) 555-0123"
+                value={valueFor("phone")}
+                onChange={(event) => setPayloadField("phone", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -130,7 +201,8 @@ export function Organization() {
               <Input
                 id="email"
                 type="email"
-                defaultValue="hello@artisankitchen.com"
+                value={valueFor("email")}
+                onChange={(event) => setPayloadField("email", event.target.value)}
                 className="bg-[var(--input-background)] border-0"
               />
             </div>
@@ -143,28 +215,20 @@ export function Organization() {
             </Label>
             <Input
               id="website"
-              defaultValue="https://artisankitchen.com"
+              value={valueFor("website")}
+              onChange={(event) => setPayloadField("website", event.target.value)}
               className="bg-[var(--input-background)] border-0"
             />
           </div>
         </CardContent>
       </Card>
 
-      {/* Business Hours */}
       <Card className="border-[var(--border)] shadow-sm">
         <CardHeader>
           <CardTitle>Operating Hours</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {[
-            { day: "Monday", hours: "11:00 AM - 10:00 PM" },
-            { day: "Tuesday", hours: "11:00 AM - 10:00 PM" },
-            { day: "Wednesday", hours: "11:00 AM - 10:00 PM" },
-            { day: "Thursday", hours: "11:00 AM - 11:00 PM" },
-            { day: "Friday", hours: "11:00 AM - 11:30 PM" },
-            { day: "Saturday", hours: "10:00 AM - 11:30 PM" },
-            { day: "Sunday", hours: "10:00 AM - 9:00 PM" },
-          ].map((item) => (
+          {OPERATING_HOURS.map((item) => (
             <div
               key={item.day}
               className="flex items-center justify-between p-3 rounded-lg bg-[var(--muted)]"
@@ -176,13 +240,17 @@ export function Organization() {
         </CardContent>
       </Card>
 
-      {/* Actions */}
-      <div className="flex justify-end gap-3">
-        <Button variant="outline">Cancel</Button>
-        <Button className="bg-[var(--genie-primary)] hover:bg-[var(--genie-primary-light)]">
-          Save Changes
-        </Button>
-      </div>
+      <PublishActions
+        canPublish={revision > 0 && !hasUnsavedChanges}
+        isLoading={isLoading}
+        isSaving={isSaving}
+        isValidating={isValidating}
+        isPublishing={isPublishing}
+        onRevert={() => reload()}
+        onValidate={() => validateDraft()}
+        onSaveDraft={() => saveDraft()}
+        onPublish={() => publishDraft()}
+      />
     </div>
   );
 }
