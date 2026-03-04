@@ -25,14 +25,14 @@ Source contracts:
 ## Phase 3: Domain Wiring
 
 - [x] Wire `organization` editor
-- [ ] Wire `location` editor (location scope)
-- [ ] Wire `menu` editor
-- [ ] Wire `tax` editor
-- [ ] Wire `payment` editor
-- [ ] Wire `receipt` editor
-- [ ] Wire `routing` editor (printers page)
-- [ ] Wire `floor_plan` editor
-- [ ] Add `pin_policy` page and wire editor
+- [x] Wire `location` editor (location scope)
+- [x] Wire `menu` editor
+- [x] Wire `tax` editor
+- [x] Wire `payment` editor
+- [x] Wire `receipt` editor
+- [x] Wire `routing` editor (printers page)
+- [x] Wire `floor_plan` editor
+- [x] Add `pin_policy` page and wire editor
 
 ## Phase 4: Wizard + Runtime Verification
 

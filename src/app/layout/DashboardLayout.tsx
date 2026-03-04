@@ -1,4 +1,8 @@
-import { Outlet, Link, useLocation } from "react-router";
+"use client";
+
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import {
   LayoutDashboard,
   Building2,
@@ -18,6 +22,7 @@ import {
   Search,
   HelpCircle,
   Lamp,
+  KeyRound,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -30,10 +35,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
+import { useSession } from "@/lib/session/store";
 
 const navigationItems = [
   { path: "/", label: "Dashboard", icon: LayoutDashboard },
   { path: "/organization", label: "Organization", icon: Building2 },
+  { path: "/pin-policy", label: "PIN Policy", icon: KeyRound },
   { path: "/locations", label: "Locations", icon: MapPin },
   { path: "/staff", label: "Staff & Roles", icon: Users },
   { path: "/menu", label: "Menu", icon: UtensilsCrossed },
@@ -46,8 +53,10 @@ const navigationItems = [
   { path: "/audit", label: "Audit Log", icon: History },
 ];
 
-export function DashboardLayout() {
-  const location = useLocation();
+export function DashboardLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const { clearSession } = useSession();
 
   return (
     <div className="flex h-screen bg-[#fafafa]">
@@ -55,7 +64,7 @@ export function DashboardLayout() {
       <aside className="w-64 bg-white border-r border-[var(--sidebar-border)] flex flex-col">
         {/* Logo */}
         <div className="h-16 border-b border-[var(--sidebar-border)] flex items-center px-6">
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2 group">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[var(--genie-primary)] to-[var(--genie-primary-light)] flex items-center justify-center">
               <Lamp className="w-5 h-5 text-white" />
             </div>
@@ -70,12 +79,12 @@ export function DashboardLayout() {
           <div className="space-y-1">
             {navigationItems.map((item) => {
               const isActive =
-                location.pathname === item.path ||
-                (item.path !== "/" && location.pathname.startsWith(item.path));
+                pathname === item.path ||
+                (item.path !== "/" && pathname.startsWith(item.path));
               const Icon = item.icon;
 
               return (
-                <Link key={item.path} to={item.path}>
+                <Link key={item.path} href={item.path}>
                   <div
                     className={`
                       flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
@@ -164,7 +173,15 @@ export function DashboardLayout() {
                 <DropdownMenuItem>Billing</DropdownMenuItem>
                 <DropdownMenuItem>Team</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(event) => {
+                    event.preventDefault();
+                    clearSession();
+                    router.replace("/login");
+                  }}
+                >
+                  Log out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -172,7 +189,7 @@ export function DashboardLayout() {
 
         {/* Page Content */}
         <main className="flex-1 overflow-auto">
-          <Outlet />
+          {children}
         </main>
       </div>
     </div>
